@@ -1,33 +1,38 @@
 #include "arithmetic_integer_operations.h"
 
 int main(int argc, char *argv[]) {
-	int size = 4;
-	unsigned * a = malloc(sizeof(unsigned) * 32);
-	unsigned * b = malloc(sizeof(unsigned) * 32);
+	int size = 3;
+	int * a = malloc(sizeof(int) * 32);
+	int * b = malloc(sizeof(int) * 32);
 	int i;
 	for (i = 0; i < 32; i++) {
-		a[i] = 2;
-		b[i] = 4;
+		a[i] = -1;
+		b[i] = -4;
 	}
 
-	unsigned * encode_a, * encode_b, * decode_a, * decode_b, * a_mul_b_encoded, *a_mul_b_decoded; 
-	encode_a = calloc(size, sizeof(unsigned));
-	encode_b = calloc(size, sizeof(unsigned));
-	decode_a = calloc(size, sizeof(unsigned));	
-	decode_b = calloc(size, sizeof(unsigned));
-	a_mul_b_encoded = calloc(size, sizeof(unsigned));			
-	a_mul_b_decoded = calloc(32, sizeof(unsigned));		
+	int * encode_a, * encode_b, * decode_a, * decode_b, * a_x_b_encoded, *a_x_b_decoded; 
+	encode_a = calloc(size, sizeof(int));
+	encode_b = calloc(size, sizeof(int));
+	decode_a = calloc(size, sizeof(int));	
+	decode_b = calloc(size, sizeof(int));
+	a_x_b_encoded = calloc(size, sizeof(int));			
+	a_x_b_decoded = calloc(32, sizeof(int));		
 
-	encode_bitslice(a, encode_a, size);
-	encode_bitslice(b, encode_b, size);	
+	encode_bitslice((unsigned *) a, (unsigned *) encode_a, size);
+	print_binary_array((unsigned *) encode_a, size);
+	encode_bitslice((unsigned *) b, (unsigned *) encode_b, size);	
 
 	int carry = 0;
-	multiply(encode_a, encode_b, size, a_mul_b_encoded);
-	print_binary_array(a_mul_b_encoded, size);
-	printf("%d\n", carry);
+	int overflow = 0;
+	signed_add(encode_a, encode_b, &carry, &overflow, size, a_x_b_encoded);
+	print_binary_array((unsigned *) a_x_b_encoded, size);
+	
 
-	decode_bitslice(a_mul_b_encoded, a_mul_b_decoded, size);
-	print_binary_array(a_mul_b_decoded, size);
+	decode_bitslice((unsigned *) a_x_b_encoded, (unsigned *) a_x_b_decoded, size);
+	print_binary_array((unsigned *) a_x_b_decoded, size);
+	printf("%d\n", a_x_b_decoded[0]);
+	printf("%d\n", carry);
+	printf("%d\n", overflow);
 
 	// encode_bitslice(a, encode_a, size);
 	// encode_bitslice(b, encode_b, size);

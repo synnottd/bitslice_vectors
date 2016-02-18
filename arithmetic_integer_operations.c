@@ -4,7 +4,7 @@
 void add(
 	unsigned * first,
 	unsigned * second,
-	int * carry,
+	unsigned * carry,
 	int size,
 	unsigned * result) 
 {
@@ -18,6 +18,24 @@ void add(
 	}
 }
 
+void signed_add(
+	int * first,
+	int * second,
+	int * carry,
+	int * overflow,
+	int size,
+	int * result) 
+{	
+	*overflow = (first[size - 1] & first[size - 1] & ~result[size - 1]) | (~first[size - 1] & ~first[size - 1] & result[size - 1]);
+	printf("%d\n", *overflow);
+	add(
+		(unsigned *) first,
+		(unsigned *) second,
+		(unsigned *) carry,
+		(int) size,
+		(unsigned *) result);
+}
+
 
 //http://www.csie.nuk.edu.tw/~wuch/course/eea051/eea051-04.pdf
 void multiply(
@@ -28,8 +46,8 @@ void multiply(
 {	
 	unsigned * temp = malloc(sizeof(unsigned) * (size));
 	result[size] = 0;
-	int i, carry;
-	carry = 0;
+	int i;
+	unsigned carry = 0;
 	mapAnd(second, result, first[0], size);
 	for(i = 1; i < size / 2 ; i++) {
 		mapAnd(second, temp, first[i], size);

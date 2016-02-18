@@ -5,9 +5,17 @@
 void add(
 	unsigned * first,
 	unsigned * second,
-	int * carry,
+	unsigned * carry,
 	int size,
 	unsigned * result);
+
+void signed_add(
+	int * first,
+	int * second,
+	int * carry,
+	int * overflow,
+	int size,
+	int * result);
 
 void multiply(
 	unsigned * first,
