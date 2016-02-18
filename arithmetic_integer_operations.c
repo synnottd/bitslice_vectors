@@ -1,4 +1,5 @@
-##include "arithmetic_integer_operations.h"
+#include "arithmetic_integer_operations.h"
+
 
 void add(
 	unsigned * first,
@@ -7,12 +8,13 @@ void add(
 	int size,
 	unsigned * result) 
 {
-	unsigned first_xor_second;
+	unsigned first_xor_second, temp_result;
 	int i;
 	for (i = 0; i < size; i++) {
 		first_xor_second = first[i] ^ second[i];
-		result[i] = first_xor_second ^ carry;
-		carry = (carry & first_xor_second) | (first & second);
+		temp_result = first_xor_second ^ *carry;
+		*carry = (*carry & first_xor_second) | (first[i] & second[i]);
+		result[i] = temp_result;
 	}
 }
 
@@ -24,15 +26,14 @@ void multiply(
 	int size,
 	unsigned * result) 
 {	
-	unsigned * temp = alloc(sizeof(unsigned) * (size));
-	result = calloc(sizeof(unsigned) * 2 * size );
+	unsigned * temp = malloc(sizeof(unsigned) * (size));
 	result[size] = 0;
 	int i, carry;
-
-	mapAnd(second, , first[0], size);
-	for(i = 1; i < size; i++) {
-		mapAnd(second, carry, first[i], size);
-		add(result[i], temp, &carry, size, result[i]);
+	carry = 0;
+	mapAnd(second, result, first[0], size);
+	for(i = 1; i < size / 2 ; i++) {
+		mapAnd(second, temp, first[i], size);
+		add(&result[i], temp, &carry, size - i, &result[i]);
 		result[i + size] = carry;
 	}
 }
@@ -46,6 +47,45 @@ void mapAnd(
 	int i;
 	for (i = 0; i < size; i++) {
 		result[i] = array[i] & operand;
+	}
+}
+
+void encode_bitslice(
+	unsigned * input,
+	unsigned * output,
+	int size)
+{
+
+	int i, j;
+	for (i = 0; i < size; i++) {
+		for (j = 0; j < sizeof(unsigned) * CHAR_BIT; j++) {
+			output[i] |= ((input[j] & (1 << i)) && 1) << j;
+		}
+	}
+}
+
+void decode_bitslice(
+	unsigned * input,
+	unsigned * output,
+	int size)
+{
+	int i, j;
+
+	for (i = 0; i < (sizeof(unsigned) * CHAR_BIT); i++) {
+		for (j = 0; j < size; j++) {
+			output[i] |= ((input[j] & (1 << i)) && 1) << j;
+		}
+	}
+}
+
+void print_binary_array(unsigned * array, int size) 
+{
+	int i, j;
+	for (i = 0; i < size; i++) {
+		for (j = (sizeof(unsigned) * CHAR_BIT) - 1; j >= 0; j--) {
+			printf("%d",  (array[i] & (1 << j)) ? 1 : 0) ;
+		}
+		printf("\n");
 	}
 }
 
